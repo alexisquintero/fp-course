@@ -120,12 +120,13 @@ instance Applicative ((->) t) where
   pure ::
     a
     -> ((->) t a)
-  pure x = (\_ -> x)
+  -- pure x = \_ -> x
+  pure x = const x
   (<*>) ::
     ((->) t (a -> b))
     -> ((->) t a)
     -> ((->) t b)
-  (<*>) f ta = (\t -> f t $ ta t)
+  (<*>) f ta = \t -> f t $ ta t
 
 
 -- | Apply a binary function in the environment.
