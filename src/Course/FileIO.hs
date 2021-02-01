@@ -79,52 +79,60 @@ the contents of c
 
 -}
 
+traverse' :: Applicative k => (a -> k b) -> List a -> k (List b)
+traverse' f xs = sequence $ f <$> xs
+
 -- Given the file name, and file contents, print them.
 -- Use @putStrLn@.
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+-- printFile filePath content = do
+--   putStrLn $ "============ " ++ filePath
+--   putStrLn content
+printFile filePath content =
+  putStrLn ("============ " ++ filePath) >> putStrLn content
 
 -- Given a list of (file name and file contents), print each.
 -- Use @printFile@.
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+-- printFiles xs = void . sequence $ (\(fp, cont) -> printFile fp cont) <$> xs
+-- printFiles = void . traverse (\(fp, cont) -> printFile fp cont)
+printFiles = void . traverse' (uncurry printFile)
 
 -- Given a file name, return (file name and file contents).
 -- Use @readFile@.
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+-- getFile filePath = ((,) filePath) <$> (readFile filePath)
+getFile = lift2 (<$>) (,) readFile
 
 -- Given a list of file names, return list of (file name and file contents).
 -- Use @getFile@.
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+-- getFiles fps = sequence $ getFile <$> fps
+getFiles = traverse' getFile
 
 -- Given a file name, read it and for each line in that file, read and print contents of each.
 -- Use @getFiles@, @lines@, and @printFiles@.
 run ::
   FilePath
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run fp = (printFiles <=< getFiles) =<< (lines . snd <$> (getFile fp))
+-- run fp =  (lines . snd <$> (getFile fp)) >>= (printFiles <=< getFiles)
 
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo: Course.FileIO#main"
+main = do
+  (x :. _) <- getArgs
+  run x
 
 ----
 
