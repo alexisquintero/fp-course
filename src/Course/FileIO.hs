@@ -124,7 +124,7 @@ getFiles = traverse' getFile
 run ::
   FilePath
   -> IO ()
-run fp = (printFiles <=< getFiles) =<< (lines . snd <$> (getFile fp))
+run fp = (printFiles <=< getFiles) =<< (lines . snd <$> getFile fp)
 -- run fp =  (lines . snd <$> (getFile fp)) >>= (printFiles <=< getFiles)
 
 -- /Tip:/ use @getArgs@ and @run@
