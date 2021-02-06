@@ -180,11 +180,11 @@ distinct ::
   Ord a =>
   List a
   -> List a
-distinct xs = fst $ runState (filtering fn xs) S.empty
-  where fn a = do
-                 vals <- get
-                 put $ S.insert a vals
-                 pure . not $ S.member a vals
+-- distinct xs = fst $ runState (filtering fn xs) S.empty
+distinct xs = eval (filtering fn xs) S.empty
+  where fn a = do vals <- get
+                  put $ S.insert a vals
+                  pure . not $ S.member a vals
 
 -- | A happy number is a positive integer, where the sum of the square of its digits eventually reaches 1 after repetition.
 -- In contrast, a sad number (not a happy number) is where the sum of the square of its digits never reaches 1
