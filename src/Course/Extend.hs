@@ -9,6 +9,7 @@ import Course.ExactlyOne
 import Course.List
 import Course.Optional
 import Course.Functor
+-- import qualified Course.Applicative as A
 
 -- | All instances of the `Extend` type-class must satisfy one law. This law
 -- is not checked by the compiler. This law is given as:
@@ -33,8 +34,7 @@ instance Extend ExactlyOne where
     (ExactlyOne a -> b)
     -> ExactlyOne a
     -> ExactlyOne b
-  (<<=) =
-    error "todo: Course.Extend (<<=)#instance ExactlyOne"
+  (<<=) f a = ExactlyOne (f a)
 
 -- | Implement the @Extend@ instance for @List@.
 --
@@ -51,8 +51,11 @@ instance Extend List where
     (List a -> b)
     -> List a
     -> List b
-  (<<=) =
-    error "todo: Course.Extend (<<=)#instance List"
+  (<<=) f as = f <$> subLists as
+    where subLists Nil = Nil
+          -- subLists ls = A.lift2 (:.) id (subLists . drop 1) $ ls
+          subLists ls = ls :. subLists (drop 1 ls)
+          -- subLists lall @ (_ :. ls) = lall :. (subLists $ ls)
 
 -- | Implement the @Extend@ instance for @Optional@.
 --
@@ -66,8 +69,8 @@ instance Extend Optional where
     (Optional a -> b)
     -> Optional a
     -> Optional b
-  (<<=) =
-    error "todo: Course.Extend (<<=)#instance Optional"
+  _ <<= Empty = Empty
+  f <<= oa = Full $ f oa
 
 -- | Duplicate the functor using extension.
 --
@@ -86,5 +89,4 @@ cojoin ::
   Extend k =>
   k a
   -> k (k a)
-cojoin =
-  error "todo: Course.Extend#cojoin"
+cojoin a = id <<= a
