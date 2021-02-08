@@ -47,4 +47,4 @@ instance (Monad f, Monad g) =>
 instance (Functor f, Contravariant g) =>
   Contravariant (Compose f g) where
 -- Implement the (>$<) function for a Contravariant instance for Compose
-  f >$< Compose a = Compose $ ((f >$<) <$> a)
+  f >$< Compose a = Compose ((f >$<) <$> a)
